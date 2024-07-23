@@ -1,42 +1,40 @@
 import { isEscapeKey } from './util.js';
-import { drawBigPicture } from './modal-image.js';
+import { displaysСomments } from './сomments.js';
+import { renderPhoto } from './render-photo.js';
 
 const bigPicture = document.querySelector('.big-picture');
 const picturesList = document.querySelector('.pictures');
 const bigPictureCancel = document.querySelector('.big-picture__cancel');
-const commentCount = document.querySelector('.social__comment-count');
-const commentsLoader = document.querySelector('.comments-loader');
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
-    modalClose();
+    onModalClose();
   }
 };
 
-const modalOpen = (evt) => {
-  if (!evt.target.closest('.picture')) {
+const onModalOpen = (evt) => {
+  const currentPicture = evt.target.closest('.picture');
+
+  if (!currentPicture) {
     return;
   }
   evt.preventDefault();
   bigPicture.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  commentCount.classList.add('hidden');
-  commentsLoader.classList.add('hidden');
-  drawBigPicture(evt);
+  renderPhoto(currentPicture);
+  displaysСomments(currentPicture);
 
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
-function modalClose() {
+function onModalClose() {
   bigPicture.classList.add('hidden');
   document.body.classList.remove('modal-open');
 
   document.removeEventListener('keydown', onDocumentKeydown);
 }
 
-const onModalOpen = () => picturesList.addEventListener('click', modalOpen);
-onModalOpen();
+picturesList.addEventListener('click', onModalOpen);
 
-const onModalClose = () => bigPictureCancel.addEventListener('click', modalClose);
-onModalClose();
+bigPictureCancel.addEventListener('click', onModalClose);
